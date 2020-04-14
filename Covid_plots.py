@@ -76,17 +76,21 @@ for country in victperc:
     victperc[country] = victperc[country]/populations[country]*100000
 
 # %%
+# Use logarithmic scales?
 LOGY=True
 
-# %%
-fig = plt.figure(figsize=(12,8))
-
+# Select countries
+selcnt = ['Poland','Sweden','United Kingdom', 'US', 'Norway', 'Germany']
 #selcnt = ['Poland','Sweden','US','Germany','Norway','Italy','Spain']
-selcnt = ['Poland','Sweden','United Kingdom', 'US', 'Norway']
 #selcnt = ['Poland', 'Germany', 'Sweden', 'Norway', 'Korea, South', 'China', 'US']
 #selcnt = ['Poland', 'Germany']
 #selcnt = ['Poland', 'Germany', 'Sweden', 'Norway', 'China', 'US']
 #selcnt = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus']
+
+
+# %%
+fig = plt.figure(figsize=(12,8))
+
 
 for c in selcnt:
     m = ~ (np.isnan(rel[c].values) | np.isinf(rel[c].values))
