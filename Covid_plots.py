@@ -126,7 +126,7 @@ vplot.set_xlim(pd.Timestamp('2020-03-1'),None)
 vplot.set_title("Per Capita deaths due to COVID-19 Cases", fontsize = 23, weight = 'bold', alpha = .75);
 
 # %%
-mortplt = (100*victperc[selcnt]/percapita[selcnt]).plot(figsize=(12,8), linewidth=5, logy=LOGY)
+mortplt = (100*victperc[selcnt]/percapita[selcnt]).plot(figsize=(12,8), linewidth=5, logy=False)
 mortplt.grid(color='#d4d4d4')
 mortplt.set_xlim(pd.Timestamp('2020-03-1'),None)
 mortplt.set_xlabel('Date')
