@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # ---
 # jupyter:
 #   jupytext:
@@ -13,7 +14,7 @@
 #     name: python3
 # ---
 
-# %% jupyter={"source_hidden": true}
+# %%
 # %pylab inline
 
 import pandas as pd
@@ -32,8 +33,10 @@ LOGY=True
 selcnt = ['Poland','Sweden','US','Germany','Norway','Italy','Spain']
 #selcnt = ['Poland', 'Germany', 'Sweden', 'Norway', 'Korea, South', 'China', 'US']
 #selcnt = ['Poland', 'Germany', 'Sweden', 'Norway', 'China', 'US']
-#selcnt = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus']
-#selcnt = ['Poland', 'Germany']
+selcnt = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus', 'Russia']
+#selcnt = ['Poland', 'Germany','Sweden','US','Norway','Italy','Spain']
+#selcnt = ['Germany','Norway','Italy','Spain']
+#selcnt = ['Poland', 'Sweden', 'US', 'Norway']
 
 # %% jupyter={"source_hidden": true}
 # Prepare the data
@@ -46,6 +49,7 @@ def fix_names(c):
             'United States':'US',
             'Slovak Republic':'Slovakia',
             'Czech Republic':'Czechia',
+            'Russian Federation':'Russia'
            }
     rmap = {v:k for k,v in mapa.items()}
     if c in mapa:
@@ -97,7 +101,7 @@ victperc = vict.copy()
 for country in victperc:
     victperc[country] = victperc[country]/populations[country]*100000
 
-# %% jupyter={"source_hidden": true}
+# %%
 fig = plt.figure(figsize=(12,8))
 
 
@@ -121,7 +125,7 @@ plt.ylabel('Relative growth (%)')
 plt.xlabel('Time (days)')
 plt.legend();
 
-# %% jupyter={"source_hidden": true}
+# %%
 percapitaplot = percapita[selcnt].plot(figsize=(12,8), linewidth=5, logy=LOGY)
 percapitaplot.grid(color='#d4d4d4')
 percapitaplot.set_xlabel('Date')
@@ -130,7 +134,7 @@ percapitaplot.set_xlim(pd.Timestamp('2020-03-1'),None)
 percapitaplot.set_title("Per Capita COVID-19 Cases", 
                         fontsize = 16, weight = 'bold', alpha = .75);
 
-# %% jupyter={"source_hidden": true}
+# %%
 vplot = victperc[selcnt].plot(figsize=(12,8), linewidth=5, logy=LOGY)
 vplot.grid(color='#d4d4d4')
 vplot.set_xlabel('Date')
@@ -138,7 +142,7 @@ vplot.set_ylabel('# of Deaths per 100,000 People')
 vplot.set_xlim(pd.Timestamp('2020-03-1'),None)
 vplot.set_title("Per Capita deaths due to COVID-19 Cases", fontsize = 16, weight = 'bold', alpha = .75);
 
-# %% jupyter={"source_hidden": true}
+# %%
 mortplt = (100*victperc[selcnt]/percapita[selcnt]).plot(figsize=(12,8), linewidth=5, logy=False)
 mortplt.grid(color='#d4d4d4')
 mortplt.set_xlim(pd.Timestamp('2020-03-1'),None)
@@ -146,5 +150,47 @@ mortplt.set_ylim(0, 10)
 mortplt.set_xlabel('Date')
 mortplt.set_ylabel('Mortality rate (%)')
 mortplt.set_title('Mortality rate due to COVID-19', fontsize = 16, weight = 'bold', alpha = .75);
+
+# %%
+fig = plt.figure(figsize=(10,7))
+
+def plleg(c):
+    pl = {
+        'Poland':'Polska', 
+        'Slovakia': 'Słowacja', 
+        'Germany': 'Niemcy',
+        'Czechia': 'Czechy',
+        'Ukraine': 'Ukraina', 
+        'Belarus': 'Białoruś', 
+        'Russia': 'Rosja'
+    }
+    if c in pl:
+        return pl[c]
+    else :
+        return c
+    
+ax = gca()
+for n, c in enumerate(selcnt):
+    m = ~ (np.isnan(rel[c].values) | np.isinf(rel[c].values))
+    t = np.arange(m.size)
+    t = rel.index.to_pydatetime()
+    for s, v in zip(t[m][::-1], rel[c].values[m][::-1]):
+        if v>0.3 :
+            break
+    mm = m & (t > s)
+    x = arange(rel.index.size)
+    fit = polyfit(x[mm], rel[c].values[mm], 1)
+    p = plt.plot(rel.index[m], 100*rel[c].values[m], '.', label=plleg(c))[0]
+    plt.plot(rel.index[mm], 100*rel[c].values[mm], 'o', color=p.get_color())
+    plt.plot(rel.index[mm], 100 * polyval(fit, x[mm]), color=p.get_color())
+
+plt.axhline(5, ls='--', label='Przybliżony poziom krytyczny (5%)')
+plt.ylim(0,50)
+plt.xlim(pd.Timestamp('2020-03-5'),None)
+plt.title('Dzienny wzrost przypadków COVID-19', fontsize = 16, weight = 'bold', alpha = .75)
+plt.ylabel('Dzienny wzrost zakażeń (%)')
+plt.xlabel('Data')
+plt.legend()
+plt.savefig('wzrosty_dzienne.png');
 
 # %%
