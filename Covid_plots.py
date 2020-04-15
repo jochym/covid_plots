@@ -35,7 +35,7 @@ selcnt = ['Poland','Sweden','US','Germany','Norway','Italy','Spain']
 #selcnt = ['Poland', 'Germany', 'Sweden', 'Norway', 'China', 'US']
 selcnt = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus', 'Russia']
 #selcnt = ['Poland', 'Germany','Sweden','US','Norway','Italy','Spain']
-#selcnt = ['Germany','Norway','Italy','Spain']
+selcnt = ['US', 'Germany', 'Italy', 'Spain']
 #selcnt = ['Poland', 'Sweden', 'US', 'Norway']
 
 # %% jupyter={"source_hidden": true}
@@ -104,26 +104,28 @@ for country in victperc:
 # %%
 fig = plt.figure(figsize=(12,8))
 
-
-for c in selcnt:
+for n, c in enumerate(selcnt):
     m = ~ (np.isnan(rel[c].values) | np.isinf(rel[c].values))
     t = np.arange(m.size)
+    t = rel.index.to_pydatetime()
     for s, v in zip(t[m][::-1], rel[c].values[m][::-1]):
         if v>0.3 :
             break
     mm = m & (t > s)
-    regr.fit(t[mm].reshape(-1,1), rel[c].values[mm])
-    p = plt.plot(t[m], 100*rel[c].values[m], '.')[0]
-    plt.plot(t[mm], 100*rel[c].values[mm], 'o', color=p.get_color(), label=c)
-    x = linspace(t[mm][-s:].min(), 1.1*t[mm][-s:].max(), 100)
-    plt.plot(x, 100 * regr.predict(x.reshape(-1,1)), color=p.get_color())
+    x = arange(rel.index.size)
+    fit = polyfit(x[mm], rel[c].values[mm], 1)
+    p = plt.plot(rel.index[m], 100*rel[c].values[m], '.', label=c)[0]
+    plt.plot(rel.index[mm], 100*rel[c].values[mm], 'o', color=p.get_color())
+    plt.plot(rel.index[mm], 100 * polyval(fit, x[mm]), color=p.get_color())
+
 plt.axhline(5, ls='--', label='approx. critical value (5%)')
 plt.ylim(0,50)
-plt.xlim(40, None)
+plt.xlim(pd.Timestamp('2020-03-5'),None)
 plt.title('Daily relative growth of COVID-19 cases', fontsize = 16, weight = 'bold', alpha = .75)
 plt.ylabel('Relative growth (%)')
-plt.xlabel('Time (days)')
-plt.legend();
+plt.xlabel('Date')
+plt.legend()
+plt.savefig('relative_growth.png');
 
 # %%
 percapitaplot = percapita[selcnt].plot(figsize=(12,8), linewidth=5, logy=LOGY)
