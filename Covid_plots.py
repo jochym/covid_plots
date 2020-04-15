@@ -21,8 +21,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
 import matplotlib.ticker as ticker
-from sklearn.linear_model import LinearRegression
-regr = LinearRegression()
 
 # %%
 # Use logarithmic scales?
@@ -35,7 +33,7 @@ selcnt = ['Poland','Sweden','US','Germany','Norway','Italy','Spain']
 #selcnt = ['Poland', 'Germany', 'Sweden', 'Norway', 'China', 'US']
 selcnt = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus', 'Russia']
 #selcnt = ['Poland', 'Germany','Sweden','US','Norway','Italy','Spain']
-selcnt = ['US', 'Germany', 'Italy', 'Spain']
+selcnt = ['US', 'Germany', 'Italy', 'Spain', 'Korea, South']
 #selcnt = ['Poland', 'Sweden', 'US', 'Norway']
 
 # %% jupyter={"source_hidden": true}
