@@ -13,10 +13,9 @@
 #     name: python3
 # ---
 
-# %%
+# %% jupyter={"source_hidden": true}
 # %pylab inline
 
-# %%
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
@@ -25,26 +24,49 @@ from sklearn.linear_model import LinearRegression
 regr = LinearRegression()
 
 # %%
+# Use logarithmic scales?
+LOGY=True
+
+# Select countries
+#selcnt = ['Poland','Sweden','United Kingdom', 'US', 'Norway', 'Germany']
+selcnt = ['Poland','Sweden','US','Germany','Norway','Italy','Spain']
+#selcnt = ['Poland', 'Germany', 'Sweden', 'Norway', 'Korea, South', 'China', 'US']
+#selcnt = ['Poland', 'Germany', 'Sweden', 'Norway', 'China', 'US']
+#selcnt = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus']
+#selcnt = ['Poland', 'Germany']
+
+# %% jupyter={"source_hidden": true}
+# Prepare the data
+
+def fix_names(c):
+    '''
+    Fix differences in naming in datasets
+    '''
+    mapa = {'Korea, Rep.':'Korea, South',
+            'United States':'US',
+            'Slovak Republic':'Slovakia',
+            'Czech Republic':'Czechia',
+           }
+    rmap = {v:k for k,v in mapa.items()}
+    if c in mapa:
+        return mapa[c]
+    elif c in rmap:
+        return rmap[c]
+    else :
+        return c
+
+
+pop = pd.read_csv('https://raw.githubusercontent.com/datasets/population/master/data/population.csv')
+
+selcnt = [fix_names(c) for c in selcnt]
+
+populations = {fix_names(c):n for c, _, _, n in 
+                   pop[pop['Country Name'].isin(selcnt) & (pop.Year==2018)].values}
+
+selcnt = [fix_names(c) for c in selcnt]
+
 # Section 2 - Loading and Selecting Data
 df = pd.read_csv('https://raw.githubusercontent.com/datasets/covid-19/master/data/countries-aggregated.csv', parse_dates=['Date'])
-
-populations = {'Poland': 37_846_611,
-               'Canada': 37_664_517, 
-               'Germany': 83_721_496, 
-               'United Kingdom': 67_802_690, 
-               'US': 330_548_815, 
-               'France': 65_239_883, 
-               'China': 1_438_027_228,
-               'Italy': 60_480_874,
-               'Sweden': 10_099_265,
-               'Norway': 5_421_241,
-               'Spain': 46_750_937,
-               'Korea, South': 51_259_999,
-               'Slovakia': 5_459_092,
-               'Czechia': 10_704_844,
-               'Ukraine': 43_787_973,
-               'Belarus': 9_449_969,               
-              }
 
 countries = list(populations.keys())
 df = df[df['Country'].isin(countries)]
@@ -75,20 +97,7 @@ victperc = vict.copy()
 for country in victperc:
     victperc[country] = victperc[country]/populations[country]*100000
 
-# %%
-# Use logarithmic scales?
-LOGY=True
-
-# Select countries
-selcnt = ['Poland','Sweden','United Kingdom', 'US', 'Norway', 'Germany']
-#selcnt = ['Poland','Sweden','US','Germany','Norway','Italy','Spain']
-#selcnt = ['Poland', 'Germany', 'Sweden', 'Norway', 'Korea, South', 'China', 'US']
-#selcnt = ['Poland', 'Germany']
-#selcnt = ['Poland', 'Germany', 'Sweden', 'Norway', 'China', 'US']
-#selcnt = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus']
-
-
-# %%
+# %% jupyter={"source_hidden": true}
 fig = plt.figure(figsize=(12,8))
 
 
@@ -107,34 +116,35 @@ for c in selcnt:
 plt.axhline(5, ls='--', label='approx. critical value (5%)')
 plt.ylim(0,50)
 plt.xlim(40, None)
-plt.title('Daily relative growth of COVID-19 cases')
+plt.title('Daily relative growth of COVID-19 cases', fontsize = 16, weight = 'bold', alpha = .75)
 plt.ylabel('Relative growth (%)')
-plt.xlabel('Time')
+plt.xlabel('Time (days)')
 plt.legend();
 
-# %%
+# %% jupyter={"source_hidden": true}
 percapitaplot = percapita[selcnt].plot(figsize=(12,8), linewidth=5, logy=LOGY)
 percapitaplot.grid(color='#d4d4d4')
 percapitaplot.set_xlabel('Date')
 percapitaplot.set_ylabel('# of Cases per 100,000 People')
 percapitaplot.set_xlim(pd.Timestamp('2020-03-1'),None)
 percapitaplot.set_title("Per Capita COVID-19 Cases", 
-                        fontsize = 23, weight = 'bold', alpha = .75);
+                        fontsize = 16, weight = 'bold', alpha = .75);
 
-# %%
+# %% jupyter={"source_hidden": true}
 vplot = victperc[selcnt].plot(figsize=(12,8), linewidth=5, logy=LOGY)
 vplot.grid(color='#d4d4d4')
 vplot.set_xlabel('Date')
 vplot.set_ylabel('# of Deaths per 100,000 People')
 vplot.set_xlim(pd.Timestamp('2020-03-1'),None)
-vplot.set_title("Per Capita deaths due to COVID-19 Cases", fontsize = 23, weight = 'bold', alpha = .75);
+vplot.set_title("Per Capita deaths due to COVID-19 Cases", fontsize = 16, weight = 'bold', alpha = .75);
 
-# %%
+# %% jupyter={"source_hidden": true}
 mortplt = (100*victperc[selcnt]/percapita[selcnt]).plot(figsize=(12,8), linewidth=5, logy=False)
 mortplt.grid(color='#d4d4d4')
 mortplt.set_xlim(pd.Timestamp('2020-03-1'),None)
+mortplt.set_ylim(0, 10)
 mortplt.set_xlabel('Date')
 mortplt.set_ylabel('Mortality rate (%)')
-mortplt.set_title('Mortality rate due to COVID-19');
+mortplt.set_title('Mortality rate due to COVID-19', fontsize = 16, weight = 'bold', alpha = .75);
 
 # %%
