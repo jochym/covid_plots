@@ -35,8 +35,9 @@ selcnt = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus', 'Rus
 #selcnt = ['Poland', 'Germany','Sweden','US','Norway','Italy','Spain']
 selcnt = ['US', 'Germany', 'Italy', 'Spain', 'Korea, South']
 #selcnt = ['Poland', 'Sweden', 'US', 'Norway']
+#selcnt = ['Poland', 'Germany']
 
-# %% jupyter={"source_hidden": true}
+# %%
 # Prepare the data
 
 def fix_names(c):
@@ -66,31 +67,29 @@ populations = {fix_names(c):n for c, _, _, n in
                    pop[pop['Country Name'].isin(selcnt) & (pop.Year==2018)].values}
 
 selcnt = [fix_names(c) for c in selcnt]
+countries = list(populations.keys())
 
-# Section 2 - Loading and Selecting Data
+# Loading data
 df = pd.read_csv('https://raw.githubusercontent.com/datasets/covid-19/master/data/countries-aggregated.csv', parse_dates=['Date'])
 
-countries = list(populations.keys())
 df = df[df['Country'].isin(countries)]
-v = df.copy()
 
-# Section 3 - Creating a Summary Column
 df['Cases'] = df[['Confirmed', 'Recovered', 'Deaths']].sum(axis=1)
 
-# Section 4 - Restructuring our Data
-df = df.pivot(index='Date', columns='Country', values='Cases')
-countries = list(df.columns)
-covid = df.reset_index('Date')
+covid = df.pivot(index='Date', columns='Country', values='Cases')
+covid = covid.reset_index('Date')
 covid.set_index(['Date'], inplace=True)
 covid.columns = countries
+
+conf = df.pivot(index='Date', columns='Country', values='Confirmed')
+recov = df.pivot(index='Date', columns='Country', values='Recovered')
+rel = conf.pct_change()
 
 percapita = covid.copy()
 for country in percapita:
     percapita[country] = percapita[country]/populations[country]*100000
 
-rel = covid.pct_change()
-
-v = v.pivot(index='Date', columns='Country', values='Deaths')
+v = df.pivot(index='Date', columns='Country', values='Deaths')
 vict = v.reset_index('Date')
 vict.set_index(['Date'], inplace=True)
 vict.columns = countries
@@ -119,13 +118,13 @@ for n, c in enumerate(selcnt):
 plt.axhline(5, ls='--', label='approx. critical value (5%)')
 plt.ylim(0,50)
 plt.xlim(pd.Timestamp('2020-03-5'),None)
-plt.title('Daily relative growth of COVID-19 cases', fontsize = 16, weight = 'bold', alpha = .75)
+plt.title('Daily relative growth of active COVID-19 cases', fontsize = 16, weight = 'bold', alpha = .75)
 plt.ylabel('Relative growth (%)')
 plt.xlabel('Date')
 plt.legend()
 plt.savefig('relative_growth.png');
 
-# %%
+# %% jupyter={"source_hidden": true}
 percapitaplot = percapita[selcnt].plot(figsize=(12,8), linewidth=5, logy=LOGY)
 percapitaplot.grid(color='#d4d4d4')
 percapitaplot.set_xlabel('Date')
@@ -134,7 +133,7 @@ percapitaplot.set_xlim(pd.Timestamp('2020-03-1'),None)
 percapitaplot.set_title("Per Capita COVID-19 Cases", 
                         fontsize = 16, weight = 'bold', alpha = .75);
 
-# %%
+# %% jupyter={"source_hidden": true}
 vplot = victperc[selcnt].plot(figsize=(12,8), linewidth=5, logy=LOGY)
 vplot.grid(color='#d4d4d4')
 vplot.set_xlabel('Date')
@@ -142,7 +141,7 @@ vplot.set_ylabel('# of Deaths per 100,000 People')
 vplot.set_xlim(pd.Timestamp('2020-03-1'),None)
 vplot.set_title("Per Capita deaths due to COVID-19 Cases", fontsize = 16, weight = 'bold', alpha = .75);
 
-# %%
+# %% jupyter={"source_hidden": true}
 mortplt = (100*victperc[selcnt]/percapita[selcnt]).plot(figsize=(12,8), linewidth=5, logy=False)
 mortplt.grid(color='#d4d4d4')
 mortplt.set_xlim(pd.Timestamp('2020-03-1'),None)
@@ -187,10 +186,13 @@ for n, c in enumerate(selcnt):
 plt.axhline(5, ls='--', label='Przybliżony poziom krytyczny (5%)')
 plt.ylim(0,50)
 plt.xlim(pd.Timestamp('2020-03-5'),None)
-plt.title('Dzienny wzrost przypadków COVID-19', fontsize = 16, weight = 'bold', alpha = .75)
+plt.title('Dzienny wzrost aktywnych przypadków COVID-19', fontsize = 16, weight = 'bold', alpha = .75)
 plt.ylabel('Dzienny wzrost zakażeń (%)')
 plt.xlabel('Data')
 plt.legend()
 plt.savefig('wzrosty_dzienne.png');
+
+# %%
+rel
 
 # %%
