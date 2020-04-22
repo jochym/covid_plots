@@ -27,12 +27,12 @@ LOGY=True
 
 # Select countries
 selcnt = []
-#selcnt += ['Poland']
+selcnt += ['Poland']
 #selcnt += ['China', 'Korea, South']
 selcnt += ['United Kingdom', 'US']
 selcnt += ['Sweden','Germany','Norway']
 selcnt += ['Italy', 'Spain']
-#selcnt = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus', 'Russia']
+selcnt = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus', 'Russia']
 #selcnt = ['Poland', 'Germany','Sweden','US','Norway','Italy','Spain']
 #selcnt = ['US', 'Germany', 'Italy', 'Spain', 'Korea, South']
 #selcnt = ['Poland', 'Sweden', 'US', 'Norway']
