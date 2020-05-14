@@ -26,7 +26,6 @@
 # the random guy on the internet (i.e. me).
 
 # %%
-# # %pylab inline
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.dates import DateFormatter
@@ -184,7 +183,7 @@ percapitaplot.set_ylim(1e-1, None)
 percapitaplot.set_title("Per Capita COVID-19 Cases", 
                         fontsize = 16, weight = 'bold', alpha = .75);
 
-# %%
+# %% jupyter={"source_hidden": true}
 percapitaplot = (confpc - recovpc - victpc).ewm(halflife=span).mean()[selcnt].plot(figsize=(12,8), linewidth=5)
 percapitaplot.grid(color='#d4d4d4')
 percapitaplot.set_xlabel('Date')
@@ -272,7 +271,7 @@ plt.ylabel(f'Dzienny wzrost zakażeń (%, {span}-dniowa wykładnicza średnia kr
 plt.xlabel('Data')
 plt.grid()
 plt.legend(loc='lower left')
-plt.savefig('wzrosty_dzienne.png');
+plt.savefig('wzrosty_dzienne.png', dpi=72);
 
 # %% jupyter={"source_hidden": true}
 plt.figure(figsize=(10,7))
@@ -299,7 +298,7 @@ plt.ylabel('Średni dzienny przyrost zakażeń na 1 mln mieszkańców\n'+
 plt.xlabel('Liczba przypadków na 1 mln mieszkańców')
 plt.legend(loc='upper left')
 plt.grid()
-plt.savefig('trajektoria_covid.png');
+plt.savefig('trajektoria_covid.png', dpi=72);
 
 # %% jupyter={"source_hidden": true}
 plt.figure(figsize=(10,7))
@@ -321,7 +320,7 @@ plt.ylabel(f'Aktywne przypadki na 1 mln. mieszkańców\n({span}-dniowa wykładni
 plt.xlabel('Data')
 plt.grid()
 plt.legend(loc='upper left')
-plt.savefig('aktywne_przypadki.png');
+plt.savefig('aktywne_przypadki.png', dpi=72);
 
 # %% jupyter={"source_hidden": true}
 plt.figure(figsize=(10,7))
@@ -344,7 +343,7 @@ plt.ylabel(f'Wzrost dzienny aktywnych przypadków na 1 mln. mieszkańców\n({spa
 plt.xlabel('Data')
 plt.grid()
 plt.legend(loc='upper left')
-plt.savefig('aktywne_wzrost.png');
+plt.savefig('aktywne_wzrost.png', dpi=72);
 
 # %% [markdown]
 # ## Experiments
