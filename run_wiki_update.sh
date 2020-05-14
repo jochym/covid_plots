@@ -25,19 +25,30 @@ SUM="Bot update $D"
 echo $SUM
 
 declare -A wikifn
+declare -A md
 
 wikifn[aktywne_wzrost]="Dzienne_zmiany_liczby_aktywnych_przypadków_COVID-19"
 wikifn[trajektoria_covid]="Trajektoria_epidemii_COVID-19"
 wikifn[wzrosty_dzienne]="Względne_wzrosty_dzienne_COVID19"
 
+for fn in wzrosty_dzienne trajektoria_covid aktywne_wzrost ; do
+    md[$fn]=`md5sum ${fn}.png`
+done
+
 python Covid_plots.py
 
 for fn in wzrosty_dzienne trajektoria_covid aktywne_wzrost ; do
-    wfn=${wikifn[$fn]}
-    pwb.py upload -user:Ptj -lang:commons -family:commons \
-        -noverify -ignorewarn -keep \
-        -summary:"$SUM" \
-        -filename:"${wfn}.png" \
-        ${fn}.png \
-        "$SUM"
+    m = `md5sum ${fn}.png`
+    if [ ${m}. == ${md[$fn]}. ]; then
+        echo "No change in ${fn}. Nothing to do"
+    else
+        md[$fn]=`md5sum ${fn}.png`
+        wfn=${wikifn[$fn]}
+        pwb.py upload -user:Ptj -lang:commons -family:commons \
+            -noverify -ignorewarn -keep \
+            -summary:"$SUM" \
+            -filename:"${wfn}.png" \
+            ${fn}.png \
+            "$SUM"
+    fi
 done
