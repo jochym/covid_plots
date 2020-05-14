@@ -1,6 +1,18 @@
 #!/bin/bash
 # -*- coding: utf-8 -*-
 
+shab=`http GET https://api.github.com/repos/datasets/covid-19/commits/HEAD Accept:application/vnd.github.VERSION.sha`
+
+echo "Waiting for update of covid data..."
+
+while [ ${shab}==`http GET https://api.github.com/repos/datasets/covid-19/commits/HEAD Accept:application/vnd.github.VERSION.sha` ] ; do
+    echo -n '.'
+    sleep 60
+done
+
+echo ""
+echo "Got updated data"
+
 D=`date`
 SUM="Bot update $D"
 
