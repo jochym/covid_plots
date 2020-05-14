@@ -1,16 +1,22 @@
 #!/bin/bash
 # -*- coding: utf-8 -*-
 
-shab=`http GET https://api.github.com/repos/datasets/covid-19/commits/HEAD Accept:application/vnd.github.VERSION.sha`
+shap=`cat last_update`
 
+echo "Previous commit: $shap"
 echo "Waiting for update of covid data..."
 
-while [ ${shab}==`http GET https://api.github.com/repos/datasets/covid-19/commits/HEAD Accept:application/vnd.github.VERSION.sha` ] ; do
-    echo -n '.'
-    sleep 60
+shac=`http GET https://api.github.com/repos/datasets/covid-19/commits/HEAD Accept:application/vnd.github.VERSION.sha`
+
+while [ ${shap}. == ${shac}. ] ; do
+    C=`date`
+    echo -ne "Last check: $C ; next in 10 min \r"
+    sleep 600
+    shac=`http GET https://api.github.com/repos/datasets/covid-19/commits/HEAD Accept:application/vnd.github.VERSION.sha`
 done
 
-echo ""
+echo -e "Current commit: $shac"
+echo ${shac} > last_update
 echo "Got updated data"
 
 D=`date`
@@ -20,9 +26,9 @@ echo $SUM
 
 declare -A wikifn
 
-wikifn[wzrosty_dzienne]="Dzienne_zmiany_liczby_aktywnych_przypadków_COVID-19"
+wikifn[aktywne_wzrost]="Dzienne_zmiany_liczby_aktywnych_przypadków_COVID-19"
 wikifn[trajektoria_covid]="Trajektoria_epidemii_COVID-19"
-wikifn[aktywne_wzrost]="Względne_wzrosty_dzienne_COVID19"
+wikifn[wzrosty_dzienne]="Względne_wzrosty_dzienne_COVID19"
 
 python Covid_plots.py
 
