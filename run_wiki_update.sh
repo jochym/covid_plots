@@ -1,54 +1,62 @@
 #!/bin/bash
 # -*- coding: utf-8 -*-
 
-shap=`cat last_update`
+touch last_update
 
-echo "Previous commit: $shap"
-echo "Waiting for update of covid data..."
+while true ; do 
+    d=`date` 
+    echo "== Update at $d " 
+ 
+    shap=`cat last_update`
 
-shac=`http GET https://api.github.com/repos/datasets/covid-19/commits/HEAD Accept:application/vnd.github.VERSION.sha`
+    echo "Previous commit: $shap"
+    echo "Waiting for update of covid data..."
 
-while [ ${shap}. == ${shac}. ] ; do
-    C=`date`
-    echo -ne "Last check: $C ; next in 10 min \r"
-    sleep 600
     shac=`http GET https://api.github.com/repos/datasets/covid-19/commits/HEAD Accept:application/vnd.github.VERSION.sha`
-done
 
-echo -e "Current commit: $shac"
-echo ${shac} > last_update
-echo "Got updated data"
+    while [ ${shap}. == ${shac}. ] ; do
+        C=`date`
+        echo -ne "Last check: $C ; next in 10 min \r"
+        sleep 600
+        shac=`http GET https://api.github.com/repos/datasets/covid-19/commits/HEAD Accept:application/vnd.github.VERSION.sha`
+    done
 
-D=`date`
-SUM="Bot update $D"
+    echo -e "Current commit: $shac"
+    echo ${shac} > last_update
+    echo "Got updated data"
 
-echo $SUM
+    D=`date`
+    SUM="Bot update $D"
 
-declare -A wikifn
-declare -A md
+    echo $SUM
 
-wikifn[aktywne_wzrost]="Dzienne_zmiany_liczby_aktywnych_przypadków_COVID-19"
-wikifn[trajektoria_covid]="Trajektoria_epidemii_COVID-19"
-wikifn[wzrosty_dzienne]="Względne_wzrosty_dzienne_COVID19"
+    declare -A wikifn
+    declare -A md
 
-for fn in wzrosty_dzienne trajektoria_covid aktywne_wzrost ; do
-    md[$fn]=`md5sum ${fn}.png`
-done
+    wikifn[aktywne_wzrost]="Dzienne_zmiany_liczby_aktywnych_przypadków_COVID-19"
+    wikifn[trajektoria_covid]="Trajektoria_epidemii_COVID-19"
+    wikifn[wzrosty_dzienne]="Względne_wzrosty_dzienne_COVID19"
 
-python Covid_plots.py
-
-for fn in wzrosty_dzienne trajektoria_covid aktywne_wzrost ; do
-    m = `md5sum ${fn}.png`
-    if [ ${m}. == ${md[$fn]}. ]; then
-        echo "No change in ${fn}. Nothing to do"
-    else
+    for fn in wzrosty_dzienne trajektoria_covid aktywne_wzrost ; do
         md[$fn]=`md5sum ${fn}.png`
-        wfn=${wikifn[$fn]}
-        pwb.py upload -user:Ptj -lang:commons -family:commons \
-            -noverify -ignorewarn -keep \
-            -summary:"$SUM" \
-            -filename:"${wfn}.png" \
-            ${fn}.png \
-            "$SUM"
-    fi
+    done
+
+    python Covid_plots.py
+
+    for fn in wzrosty_dzienne trajektoria_covid aktywne_wzrost ; do
+        m=`md5sum ${fn}.png`
+        if [ "${m}". == "${md[$fn]}". ]; then
+            echo "No change in ${fn}. Nothing to do"
+        else
+            md[$fn]=`md5sum ${fn}.png`
+            wfn=${wikifn[$fn]}
+            pwb.py upload -user:Ptj -lang:commons -family:commons \
+                -noverify -ignorewarn -keep \
+                -summary:"$SUM" \
+                -filename:"${wfn}.png" \
+                ${fn}.png \
+                "$SUM"
+        fi
+    done
+    echo ""
 done
