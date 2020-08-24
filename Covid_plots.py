@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.4.2
+#       jupytext_version: 1.5.2
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -36,7 +36,7 @@ from pandas.plotting import register_matplotlib_converters
 
 register_matplotlib_converters()
 
-# %% jupyter={"source_hidden": true}
+# %%
 # Use logarithmic scales?
 LOGY=True
 
@@ -46,7 +46,7 @@ selcnt = []
 selcnt += ['United Kingdom', 'US']
 selcnt += ['Sweden','Germany','Norway']
 selcnt += ['Italy', 'Spain']
-selcnt += ['Russia',]
+selcnt += ['Russia','Brazil']
 
 # Countries for plwiki plots
 plwiki = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus', 'Russia']
