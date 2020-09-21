@@ -7,7 +7,7 @@
 #       extension: .py
 #       format_name: percent
 #       format_version: '1.3'
-#       jupytext_version: 1.5.2
+#       jupytext_version: 1.6.0
 #   kernelspec:
 #     display_name: Python 3
 #     language: python
@@ -47,7 +47,9 @@ selcnt += ['United Kingdom', 'US']
 selcnt += ['Sweden','Germany','Norway']
 selcnt += ['Italy', 'Spain']
 selcnt += ['Russia','Brazil']
-
+selcnt = ['US', 'Brazil', 'Mexico', 'India']
+selcnt += ['Italy', 'Spain']
+selcnt += ['China', 'Korea, South']
 # Countries for plwiki plots
 plwiki = ['Poland', 'Slovakia', 'Germany', 'Czechia', 'Ukraine', 'Belarus', 'Russia']
 
@@ -116,7 +118,7 @@ for country in victpc:
 #
 # Additionally exponential decay seems to fit the growth rate curves quite well.
 
-# %% jupyter={"source_hidden": true}
+# %%
 fig = plt.figure(figsize=(10,7))
 span = 5
 rel = relgr.ewm(halflife=span).mean()
@@ -132,11 +134,11 @@ for n, c in enumerate(selcnt):
     x = arange(rel.index.size)
     fit = polyfit(x[mm], log(rel[c].values[mm]), 1)
     p = plt.semilogy(rel.index[m], 100*rel[c].values[m], '.')[0]
-    plt.plot(rel.index[mm], 100*rel[c].values[mm], 'o', label=c, color=p.get_color())
-    plt.plot(rel.index[mm], 100 * exp(polyval(fit, x[mm])), color=p.get_color())
+    plt.plot(rel.index[mm], 100*rel[c].values[mm], '.', label=c, color=p.get_color())
+    #plt.plot(rel.index[mm], 100 * exp(polyval(fit, x[mm])), color=p.get_color())
 
-plt.axhline(5, ls='--', label='approx. critical value (5%)')
-plt.axhline(2, ls=':', label='effective critical value (2%)')
+# plt.axhline(5, ls='--', label='approx. critical value (5%)')
+# plt.axhline(2, ls=':', label='effective critical value (2%)')
 plt.ylim(None,50)
 plt.xlim(pd.Timestamp('2020-03-5'),None)
 plt.title('Daily relative growth of COVID-19 cases', fontsize = 16, weight = 'bold', alpha = .75)
@@ -217,7 +219,7 @@ mortplt.set_title('Mortality rate due to COVID-19', fontsize = 16, weight = 'bol
 # ## Polish Wikipedia plots
 # These are plots created for Polish Wikipedia
 
-# %% jupyter={"source_hidden": true}
+# %%
 fig = plt.figure(figsize=(10,7))
 
 def plleg(c):
@@ -253,17 +255,17 @@ for n, c in enumerate(plwiki):
     model[c] = fit, x[mm]
     p = plt.semilogy(rel.index[m], 100*rel[c].values[m], '.')[0]
     plt.plot(rel.index[mm], 100*rel[c].values[mm], 
-             'd' if c=='Poland' else 'o', 
+             'o' if c=='Poland' else '.', 
              color=p.get_color(), label=plleg(c),
              zorder = 3 if c=='Poland' else 2,
             )
-    plt.plot(rel.index[mm], 100 * exp(polyval(fit, x[mm])),
-             color=p.get_color(),
-             lw=3 if c=='Poland' else 2,
-             zorder = 3 if c=='Poland' else 2)
+#     plt.plot(rel.index[mm], 100 * exp(polyval(fit, x[mm])),
+#              color=p.get_color(),
+#              lw=3 if c=='Poland' else 2,
+#              zorder = 3 if c=='Poland' else 2)
 
-plt.axhline(5, ls='--', label='Przybliżony poziom krytyczny (5%)')
-plt.axhline(2, ls=':', label='Efektywny poziom krytyczny (2%)')
+# plt.axhline(5, ls='--', label='Przybliżony poziom krytyczny (5%)')
+# plt.axhline(2, ls=':', label='Efektywny poziom krytyczny (2%)')
 plt.ylim(None,50)
 plt.xlim(pd.Timestamp('2020-03-5'),None)
 plt.title(f'Dzienny wzrost przypadków COVID-19 ({str(rel.index[-1]).split()[0]})', fontsize = 16, weight = 'bold', alpha = .75)
